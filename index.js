@@ -8,7 +8,7 @@ const fs = require("fs");
 const path = require("path");
 
 const app = express();
-const port = process.env.PORT || 80;
+const port = process.env.PORT || 8080;
 
 // Middleware to parse JSON and URL-encoded bodies
 app.use(express.json());
@@ -73,6 +73,7 @@ async function ensureDatabaseExists() {
   const dbConfig = {
     host: process.env.DB_HOST || "localhost",
     port: process.env.DB_PORT ? parseInt(process.env.DB_PORT) : 5432,
+    ssl: (process.env.DB_HOST && process.env.DB_HOST != 'localhost') ? { ca: fs.readFileSync('global-bundle.pem').toString() } : false,
     user: process.env.DB_USER || "postgres",
     password: process.env.DB_PASS || "postgres",
     database: "postgres" // Connect to the default database
@@ -160,6 +161,7 @@ const AppDataSource = new DataSource({
   type: "postgres",
   host: process.env.DB_HOST || "localhost",
   port: process.env.DB_PORT ? parseInt(process.env.DB_PORT) : 5432,
+  ssl: (process.env.DB_HOST && process.env.DB_HOST != 'localhost') ? { ca: fs.readFileSync('global-bundle.pem').toString() } : false,
   username: process.env.DB_USER || "postgres",
   password: process.env.DB_PASS || "postgres",
   database: process.env.DB_NAME || "mikes_macaroon_market",
